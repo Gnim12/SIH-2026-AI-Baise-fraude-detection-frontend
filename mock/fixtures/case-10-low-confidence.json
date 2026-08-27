@@ -1,0 +1,84 @@
+{
+  "id": "case-10-low-confidence",
+  "title": "Low confidence",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 170, "event": { "stage": "quality", "documentId": "doc-1", "ok": true, "dpi": 180 } },
+    {
+      "delayMs": 320,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-1",
+        "type": "PASSPORT",
+        "country": "UNKNOWN",
+        "version": "v1",
+        "confidence": 0.51,
+        "imageUrl": "/assets/case-10-doc.svg"
+      }
+    },
+    {
+      "delayMs": 700,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-1",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "N/A", "confidence": 0.31, "source": "VIZ" },
+          { "key": "given_names", "label": "Given names", "value": "N/A", "confidence": 0.29, "source": "VIZ" }
+        ],
+        "signals": [
+          {
+            "id": "sig-low-ocr-confidence",
+            "code": "OCR_LOW_CONFIDENCE",
+            "module": "ocr",
+            "severity": "medium",
+            "weight": 0,
+            "detail": "OCR confidence below threshold across all fields."
+          }
+        ]
+      }
+    },
+    {
+      "delayMs": 940,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "UNAVAILABLE",
+          "similarity": null,
+          "threshold": 0.7,
+          "padVerdict": "not_run"
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 1120,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 1300,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-1",
+        "views": { "rgb": "/assets/case-10-doc.svg" },
+        "signals": []
+      }
+    },
+    { "delayMs": 1360, "event": { "stage": "crossdoc", "signals": [] } },
+    {
+      "delayMs": 1420,
+      "event": {
+        "stage": "decision",
+        "band": "ABSTAIN",
+        "risk": null,
+        "confidence": 0.34,
+        "abstained": true,
+        "coverageFlags": ["no_biometric"],
+        "timingMs": { "quality": 170, "classified": 320, "ocr": 700, "face": 940, "database": 1120, "forensics": 1300, "crossdoc": 1360, "total": 1420 }
+      }
+    }
+  ]
+}

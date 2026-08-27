@@ -1,0 +1,110 @@
+{
+  "id": "case-07-multiple-identities",
+  "title": "Multiple identities",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 140, "event": { "stage": "quality", "documentId": "doc-1", "ok": true, "dpi": 300 } },
+    {
+      "delayMs": 260,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-1",
+        "type": "PASSPORT",
+        "country": "IND",
+        "version": "v3",
+        "confidence": 0.97,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 480,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-1",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.98, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.98, "source": "MERGED" }
+        ],
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 600,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.91,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 750,
+      "event": {
+        "stage": "database",
+        "graph": {
+          "priorEncounters": [
+            {
+              "sessionId": "sess-hist-1",
+              "timestamp": "2026-06-14T09:12:00Z",
+              "checkpoint": "IGI-T2-LANE-03",
+              "nameOnDocument": "JEAN DUPONT",
+              "documentNumber": "L898902C3",
+              "faceSimilarity": 0.93,
+              "conflict": false
+            },
+            {
+              "sessionId": "sess-hist-2",
+              "timestamp": "2026-07-02T17:40:00Z",
+              "checkpoint": "IGI-T1-LANE-11",
+              "nameOnDocument": "MARC LEBLANC",
+              "documentNumber": "X445210Y1",
+              "faceSimilarity": 0.9,
+              "conflict": true
+            }
+          ],
+          "conflicts": 1,
+          "impossibleTravel": false
+        },
+        "signals": [
+          {
+            "id": "sig-graph-conflict",
+            "code": "IDENTITY_GRAPH_CONFLICT",
+            "module": "graph",
+            "severity": "critical",
+            "weight": 40,
+            "detail": "The same face was previously encountered under a different name and document number."
+          }
+        ]
+      }
+    },
+    {
+      "delayMs": 900,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-1",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    { "delayMs": 950, "event": { "stage": "crossdoc", "signals": [] } },
+    {
+      "delayMs": 1000,
+      "event": {
+        "stage": "decision",
+        "band": "HOLD",
+        "risk": 78,
+        "confidence": 0.92,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 140, "classified": 260, "ocr": 480, "face": 600, "database": 750, "forensics": 900, "crossdoc": 950, "total": 1000 }
+      }
+    }
+  ]
+}

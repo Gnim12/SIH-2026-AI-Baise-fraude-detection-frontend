@@ -1,0 +1,95 @@
+{
+  "id": "case-01-genuine",
+  "title": "Genuine, genuine",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 160, "event": { "stage": "quality", "documentId": "doc-1", "ok": true, "dpi": 320 } },
+    {
+      "delayMs": 300,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-1",
+        "type": "PASSPORT",
+        "country": "IND",
+        "version": "v3",
+        "confidence": 0.99,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 640,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-1",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.99, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.99, "source": "MERGED" },
+          { "key": "birth_date", "label": "Date of birth", "value": "1990-04-12", "confidence": 0.98, "source": "MERGED" },
+          { "key": "expiry_date", "label": "Expiry", "value": "2029-08-01", "confidence": 0.99, "source": "MERGED" }
+        ],
+        "mrz": {
+          "format": "TD3",
+          "status": "VERIFIED",
+          "lines": [
+            { "text": "P<INDDUPONT<<JEAN<<<<<<<<<<<<<<<<<<<<<<<<<<<", "groups": [] },
+            {
+              "text": "L898902C36IND7408122F1204159ZE184226B<<<<<10",
+              "groups": [
+                { "name": "doc_number", "start": 0, "end": 9, "checkDigitIndex": 9, "valid": true },
+                { "name": "birth_date", "start": 13, "end": 19, "checkDigitIndex": 19, "valid": true },
+                { "name": "expiry_date", "start": 21, "end": 27, "checkDigitIndex": 27, "valid": true }
+              ]
+            }
+          ]
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 900,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.94,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 1120,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 1400,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-1",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    { "delayMs": 1480, "event": { "stage": "crossdoc", "signals": [] } },
+    {
+      "delayMs": 1600,
+      "event": {
+        "stage": "decision",
+        "band": "CLEAR",
+        "risk": 3,
+        "confidence": 0.97,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 160, "classified": 300, "ocr": 640, "face": 900, "database": 1120, "forensics": 1400, "crossdoc": 1480, "total": 1600 }
+      }
+    }
+  ]
+}

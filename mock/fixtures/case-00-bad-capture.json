@@ -1,0 +1,18 @@
+{
+  "id": "case-00-bad-capture",
+  "title": "Bad capture",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    {
+      "delayMs": 150,
+      "event": {
+        "stage": "quality",
+        "documentId": "doc-1",
+        "ok": false,
+        "dpi": 96,
+        "reason": "Glare across the machine-readable zone.",
+        "hint": "Remove the document from its cover and lay it flat, away from direct light."
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "id": "case-03-modified-dob",
+  "title": "Modified date of birth",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 180, "event": { "stage": "quality", "documentId": "doc-1", "ok": true, "dpi": 312 } },
+    {
+      "delayMs": 310,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-1",
+        "type": "PASSPORT",
+        "country": "IND",
+        "version": "v3",
+        "confidence": 0.97,
+        "imageUrl": "/assets/case-03-doc.svg"
+      }
+    },
+    {
+      "delayMs": 720,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-1",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.99, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.99, "source": "MERGED" },
+          { "key": "birth_date", "label": "Date of birth", "value": "1990-04-12", "confidence": 0.62, "source": "MERGED", "mismatch": true },
+          { "key": "expiry_date", "label": "Expiry", "value": "2029-08-01", "confidence": 0.98, "source": "MERGED" }
+        ],
+        "mrz": {
+          "format": "TD3",
+          "status": "VERIFIED",
+          "lines": [
+            { "text": "P<INDDUPONT<<JEAN<<<<<<<<<<<<<<<<<<<<<<<<<<<", "groups": [] },
+            {
+              "text": "L898902C36IND7408127F1204159ZE184226B<<<<<10",
+              "groups": [
+                { "name": "doc_number", "start": 0, "end": 9, "checkDigitIndex": 9, "valid": true },
+                { "name": "birth_date", "start": 13, "end": 19, "checkDigitIndex": 19, "valid": false, "expected": "4", "read": "7", "signalId": "sig-mrz-dob" },
+                { "name": "expiry_date", "start": 21, "end": 27, "checkDigitIndex": 27, "valid": true }
+              ]
+            }
+          ]
+        },
+        "signals": [
+          {
+            "id": "sig-mrz-dob",
+            "code": "MRZ_CHECKDIGIT_DOB",
+            "module": "validation",
+            "severity": "high",
+            "weight": 30,
+            "detail": "MRZ check digit for date of birth does not match.",
+            "region": { "x": 0.08, "y": 0.55, "w": 0.22, "h": 0.05, "documentId": "doc-1" },
+            "convergenceGroup": "dob-region"
+          }
+        ]
+      }
+    },
+    {
+      "delayMs": 950,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.92,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 1140,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 1550,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-1",
+        "views": { "rgb": "/assets/case-03-doc.svg", "ela": "/assets/case-03-heatmap.svg", "heatmap": "/assets/case-03-heatmap.svg" },
+        "signals": [
+          {
+            "id": "sig-font-dob",
+            "code": "FONT_MISMATCH_DOB",
+            "module": "template",
+            "severity": "high",
+            "weight": 22,
+            "detail": "Font in date of birth field does not match the document template.",
+            "region": { "x": 0.08, "y": 0.55, "w": 0.22, "h": 0.05, "documentId": "doc-1" },
+            "convergenceGroup": "dob-region"
+          },
+          {
+            "id": "sig-tamper-dob",
+            "code": "TAMPER_ELA_DOB",
+            "module": "tamper",
+            "severity": "critical",
+            "weight": 28,
+            "detail": "Error-level analysis shows a localized anomaly over the date of birth.",
+            "region": { "x": 0.08, "y": 0.55, "w": 0.22, "h": 0.05, "documentId": "doc-1" },
+            "heatmapUrl": "/assets/case-03-heatmap.svg",
+            "convergenceGroup": "dob-region"
+          },
+          {
+            "id": "sig-watchlist-clear",
+            "code": "WATCHLIST_CLEAR",
+            "module": "database",
+            "severity": "info",
+            "weight": 0,
+            "detail": "No watchlist match."
+          }
+        ]
+      }
+    },
+    { "delayMs": 1610, "event": { "stage": "crossdoc", "signals": [] } },
+    {
+      "delayMs": 1680,
+      "event": {
+        "stage": "decision",
+        "band": "HOLD",
+        "risk": 80,
+        "confidence": 0.88,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 180, "classified": 310, "ocr": 720, "face": 950, "database": 1140, "forensics": 1550, "crossdoc": 1610, "total": 1680 }
+      }
+    }
+  ]
+}

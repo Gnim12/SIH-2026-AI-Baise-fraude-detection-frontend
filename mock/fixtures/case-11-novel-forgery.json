@@ -1,0 +1,88 @@
+{
+  "id": "case-11-novel-forgery",
+  "title": "Novel forgery",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 140, "event": { "stage": "quality", "documentId": "doc-1", "ok": true, "dpi": 300 } },
+    {
+      "delayMs": 260,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-1",
+        "type": "NATIONAL_ID",
+        "country": "IND",
+        "version": "v2",
+        "confidence": 0.95,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 480,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-1",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.97, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.97, "source": "MERGED" }
+        ],
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 600,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.88,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 700,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 850,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-1",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": [
+          {
+            "id": "sig-template-anomaly",
+            "code": "TEMPLATE_ANOMALY_UNKNOWN",
+            "module": "template",
+            "severity": "high",
+            "weight": 38,
+            "detail": "Layout does not match any known template for this document version and does not correspond to a catalogued attack pattern.",
+            "region": { "x": 0.55, "y": 0.06, "w": 0.3, "h": 0.1, "documentId": "doc-1" }
+          }
+        ]
+      }
+    },
+    { "delayMs": 900, "event": { "stage": "crossdoc", "signals": [] } },
+    {
+      "delayMs": 950,
+      "event": {
+        "stage": "decision",
+        "band": "SECONDARY",
+        "risk": 48,
+        "confidence": 0.7,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 140, "classified": 260, "ocr": 480, "face": 600, "database": 700, "forensics": 850, "crossdoc": 900, "total": 950 }
+      }
+    }
+  ]
+}

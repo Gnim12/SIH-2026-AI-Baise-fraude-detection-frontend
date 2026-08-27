@@ -1,0 +1,127 @@
+{
+  "id": "case-13-visa-transplant",
+  "title": "Visa transplant",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 100, "event": { "stage": "quality", "documentId": "doc-passport", "ok": true, "dpi": 300 } },
+    { "delayMs": 120, "event": { "stage": "quality", "documentId": "doc-visa", "ok": true, "dpi": 300 } },
+    {
+      "delayMs": 220,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-passport",
+        "type": "PASSPORT",
+        "country": "IND",
+        "version": "v3",
+        "confidence": 0.98,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 240,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-visa",
+        "type": "VISA",
+        "country": "FRA",
+        "version": "v1",
+        "confidence": 0.97,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 400,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-passport",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.98, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.98, "source": "MERGED" }
+        ],
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 460,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-visa",
+        "fields": [
+          { "key": "visa_category", "label": "Category", "value": "C", "confidence": 0.97, "source": "MERGED" },
+          { "key": "entries", "label": "Entries", "value": "SINGLE", "confidence": 0.97, "source": "MERGED" }
+        ],
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 620,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.91,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 720,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 850,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-passport",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 870,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-visa",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 920,
+      "event": {
+        "stage": "crossdoc",
+        "signals": [
+          {
+            "id": "sig-visa-transplant",
+            "code": "CROSSDOC_PHOTO_TRANSPLANT",
+            "module": "crossdoc",
+            "severity": "critical",
+            "weight": 55,
+            "detail": "The visa portrait does not match the passport portrait for the same declared identity."
+          }
+        ]
+      }
+    },
+    {
+      "delayMs": 970,
+      "event": {
+        "stage": "decision",
+        "band": "HOLD",
+        "risk": 90,
+        "confidence": 0.94,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 120, "classified": 240, "ocr": 460, "face": 620, "database": 720, "forensics": 870, "crossdoc": 920, "total": 970 }
+      }
+    }
+  ]
+}

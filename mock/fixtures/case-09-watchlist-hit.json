@@ -1,0 +1,87 @@
+{
+  "id": "case-09-watchlist-hit",
+  "title": "Watchlist hit",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 100, "event": { "stage": "quality", "documentId": "doc-1", "ok": true, "dpi": 300 } },
+    {
+      "delayMs": 180,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-1",
+        "type": "PASSPORT",
+        "country": "IND",
+        "version": "v3",
+        "confidence": 0.97,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 260,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": [
+          {
+            "id": "sig-watchlist-hit",
+            "code": "WATCHLIST_MATCH",
+            "module": "database",
+            "severity": "critical",
+            "weight": 100,
+            "detail": "Document number matches an active watchlist entry."
+          }
+        ]
+      }
+    },
+    {
+      "delayMs": 320,
+      "event": {
+        "stage": "decision",
+        "band": "HOLD",
+        "risk": 100,
+        "confidence": 0.99,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 100, "classified": 180, "database": 260, "total": 320 }
+      }
+    },
+    {
+      "delayMs": 550,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-1",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.98, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.98, "source": "MERGED" }
+        ],
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 700,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.9,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 850,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-1",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    { "delayMs": 950, "event": { "stage": "crossdoc", "signals": [] } }
+  ]
+}

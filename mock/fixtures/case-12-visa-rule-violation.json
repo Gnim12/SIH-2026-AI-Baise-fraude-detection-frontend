@@ -1,0 +1,123 @@
+{
+  "id": "case-12-visa-rule-violation",
+  "title": "Visa rule violation",
+  "tape": [
+    { "delayMs": 0, "event": { "stage": "received", "sessionId": "__SESSION_ID__", "laneId": "IGI-T3-LANE-07", "officerId": "OFF-2291" } },
+    { "delayMs": 100, "event": { "stage": "quality", "documentId": "doc-passport", "ok": true, "dpi": 300 } },
+    { "delayMs": 120, "event": { "stage": "quality", "documentId": "doc-visa", "ok": true, "dpi": 300 } },
+    {
+      "delayMs": 220,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-passport",
+        "type": "PASSPORT",
+        "country": "IND",
+        "version": "v3",
+        "confidence": 0.98,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 240,
+      "event": {
+        "stage": "classified",
+        "documentId": "doc-visa",
+        "type": "VISA",
+        "country": "FRA",
+        "version": "v1",
+        "confidence": 0.96,
+        "imageUrl": "/assets/case-01-doc.svg"
+      }
+    },
+    {
+      "delayMs": 400,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-passport",
+        "fields": [
+          { "key": "surname", "label": "Surname", "value": "DUPONT", "confidence": 0.98, "source": "MERGED" },
+          { "key": "given_names", "label": "Given names", "value": "JEAN", "confidence": 0.98, "source": "MERGED" }
+        ],
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 460,
+      "event": {
+        "stage": "ocr",
+        "documentId": "doc-visa",
+        "fields": [
+          { "key": "visa_category", "label": "Category", "value": "C", "confidence": 0.97, "source": "MERGED" },
+          { "key": "duration_of_stay", "label": "Duration of stay", "value": "90", "confidence": 0.95, "source": "MERGED" },
+          { "key": "entries", "label": "Entries", "value": "SINGLE", "confidence": 0.95, "source": "MERGED" }
+        ],
+        "signals": [
+          {
+            "id": "sig-visa-duration",
+            "code": "VISA_DURATION_EXCEEDS_CATEGORY",
+            "module": "validation",
+            "severity": "medium",
+            "weight": 20,
+            "detail": "A 90-day stay exceeds the maximum permitted for a category C visa.",
+            "region": { "x": 0.1, "y": 0.5, "w": 0.3, "h": 0.06, "documentId": "doc-visa" }
+          }
+        ]
+      }
+    },
+    {
+      "delayMs": 620,
+      "event": {
+        "stage": "face",
+        "face": {
+          "status": "MATCH",
+          "similarity": 0.92,
+          "threshold": 0.7,
+          "documentPortraitUrl": "/assets/case-01-doc-portrait.svg",
+          "livePortraitUrl": "/assets/case-01-live-portrait.svg",
+          "padVerdict": "live",
+          "ghostPortraitConsistent": true
+        },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 720,
+      "event": {
+        "stage": "database",
+        "graph": { "priorEncounters": [], "conflicts": 0, "impossibleTravel": false },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 850,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-passport",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    {
+      "delayMs": 870,
+      "event": {
+        "stage": "forensics",
+        "documentId": "doc-visa",
+        "views": { "rgb": "/assets/case-01-doc.svg" },
+        "signals": []
+      }
+    },
+    { "delayMs": 900, "event": { "stage": "crossdoc", "signals": [] } },
+    {
+      "delayMs": 950,
+      "event": {
+        "stage": "decision",
+        "band": "SECONDARY",
+        "risk": 30,
+        "confidence": 0.93,
+        "abstained": false,
+        "coverageFlags": [],
+        "timingMs": { "quality": 120, "classified": 240, "ocr": 460, "face": 620, "database": 720, "forensics": 870, "crossdoc": 900, "total": 950 }
+      }
+    }
+  ]
+}
