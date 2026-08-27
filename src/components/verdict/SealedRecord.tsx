@@ -15,7 +15,8 @@ interface SealedRecordProps {
 /** SessionDetail's read-only replacement for DecisionBar (§5.5): "the
  *  sealed record (decision, note, officer, timestamp, model versions from
  *  the session)". The session contract has no dedicated ML-model-version
- *  field, so "model versions" is shown as each document's own template
+ *  field (see the CONTRACT GAP comment on ScreeningSession in
+ *  types/screening.ts), so "model versions" is shown as each document's own template
  *  version (`ScreenedDocument.version`) — the closest real, non-invented
  *  data the session carries (§7 rule 9: never invent data that isn't
  *  there) — alongside the per-stage timings that are genuinely present. */

@@ -35,7 +35,20 @@ export async function startScreening(caseId: string): Promise<{ sessionId: strin
  *  in /api/v1/history (§5.5, §6). Posts the full accumulated session
  *  alongside the decision fields — the server only replays tapes and never
  *  tracks session state itself, so the client is the only party with the
- *  complete picture to seal. */
+ *  complete picture to seal.
+ *
+ *  MOCK-SHAPE WARNING, do not carry this body shape to the real backend:
+ *  BACKEND_BRIEF.md §7 defines the real endpoint as
+ *  `POST /api/v1/screening/{id}/decision {decision, note}` — decision and
+ *  note ONLY. The real backend already holds session state server-side
+ *  (§8.1/§8.2's audit chain), and it computes `override` itself by
+ *  comparing `decision` to the system's own recorded band rather than
+ *  trusting a client-sent flag. This function's `session` param and the
+ *  `override`/`session` body fields exist purely to make the mock server's
+ *  stateless replay produce a real GET /api/v1/history — swapping this one
+ *  function to the real minimal `{decision, note}` body (dropping both) is
+ *  the entire migration; DecisionBar and sessionStore never see the wire
+ *  shape and need no changes. */
 export async function submitDecision(
   session: ScreeningSession,
   decision: Decision,

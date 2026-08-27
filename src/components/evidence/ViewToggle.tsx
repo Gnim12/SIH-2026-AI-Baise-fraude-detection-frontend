@@ -38,7 +38,9 @@ export function ViewToggle({ views, active, onChange }: ViewToggleProps) {
                 ? 'cursor-not-allowed border-shell-700 text-steel-400/50'
                 : isActive
                   ? 'border-steel-200 bg-shell-700 text-steel-200'
-                  : 'border-shell-600 text-steel-400 hover:bg-shell-700'
+                  // hover:text-steel-300, not -400: hover turns the
+                  // background --shell-700, where --steel-400 fails contrast.
+                  : 'border-shell-600 text-steel-400 hover:bg-shell-700 hover:text-steel-300'
             }`}
           >
             {label}

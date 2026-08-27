@@ -30,7 +30,9 @@ function Portrait({ label, url }: PortraitProps) {
         {url ? (
           <img src={url} alt={label} className="h-full w-full object-cover" />
         ) : (
-          <span className="px-1 text-center text-scale-1 text-steel-400">no image</span>
+          // text-steel-300, not -400: this box's background is always
+          // --shell-700, where --steel-400 fails contrast (4.26:1).
+          <span className="px-1 text-center text-scale-1 text-steel-300">no image</span>
         )}
       </div>
       <span className="text-scale-1 text-steel-400">{label}</span>

@@ -13,6 +13,8 @@ export default {
         },
         steel: {
           400: 'var(--steel-400)',
+          // M6 contrast-audit addition — see index.css :root comment.
+          300: 'var(--steel-300)',
           200: 'var(--steel-200)',
         },
         // document canvas

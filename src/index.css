@@ -8,7 +8,8 @@
   --shell-800: #14202a; /* panels */
   --shell-700: #1d2c38; /* raised rows, hover */
   --shell-600: #2a3d4c; /* borders on dark */
-  --steel-400: #7a8fa0; /* secondary text on dark */
+  --steel-400: #7a8fa0; /* secondary text on dark — 4.93:1 on --shell-800, 5.49:1 on --shell-900. NOT for --shell-700 (only 4.26:1 there, fails 4.5:1) */
+  --steel-300: #8598a9; /* M6 contrast-audit addition: secondary text specifically for --shell-700 surfaces (hover/raised rows) — 4.80:1 on --shell-700 */
   --steel-200: #c3d0da; /* primary text on dark */
 
   /* document canvas */

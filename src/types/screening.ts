@@ -117,6 +117,15 @@ export interface ScreeningSession {
     override: boolean;          // differed from the system band
   };
   sealed: boolean;
+  // CONTRACT GAP (flagging, not working around — same category as MrzGroup's
+  // expected/read, BACKEND_BRIEF.md §3/§4): this session has no model_versions
+  // field, but BACKEND_BRIEF.md §8.2's audit record assumes one exists
+  // ('model_versions': manifest.versions, sourced from §1.5's model manifest).
+  // SessionDetail's sealed record (§5.5 of this brief) currently shows each
+  // document's own `version` (a template version, already on this type) as
+  // the closest real substitute — it is NOT the same data ML model versions
+  // would be. Resolve by adding a real modelVersions field here once the
+  // backend's manifest shape is settled; do not invent one before then.
 }
 
 // ---------- WebSocket events ----------
