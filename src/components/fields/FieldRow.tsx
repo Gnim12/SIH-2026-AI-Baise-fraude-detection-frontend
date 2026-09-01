@@ -14,7 +14,7 @@ export function FieldRow({ field }: FieldRowProps) {
   return (
     <div
       className={`flex items-center justify-between gap-2 px-2 py-1.5 text-scale-3 ${
-        field.mismatch ? 'border-l-4 border-hold bg-hold/5' : ''
+        field.mismatch ? 'border-l-4 border-hold' : ''
       }`}
     >
       <span className="flex min-w-0 items-center gap-2">
@@ -22,7 +22,7 @@ export function FieldRow({ field }: FieldRowProps) {
         {field.mismatch && (
           <span
             title="MRZ and VIZ disagree on this field"
-            className="shrink-0 rounded bg-hold/20 px-1 py-0.5 text-scale-1 text-hold"
+            className="shrink-0 rounded bg-hold-badge px-1 py-0.5 text-scale-1 text-hold"
           >
             MRZ≠VIZ
           </span>

@@ -43,7 +43,7 @@ export function CrossDocumentPanel({
         <h3 className="text-eyebrow mb-2 flex items-center gap-2">
           Cross-document
           {crossDocumentSignals.length > 0 && (
-            <span className="rounded bg-hold/20 px-1.5 py-0.5 text-scale-1 text-hold">
+            <span className="rounded bg-hold-badge px-1.5 py-0.5 text-scale-1 text-hold">
               {crossDocumentSignals.length} finding{crossDocumentSignals.length === 1 ? '' : 's'}
             </span>
           )}

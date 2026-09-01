@@ -233,6 +233,16 @@ function readBody(req) {
   });
 }
 
+/** Consumes a request body without parsing it — used for the real
+ *  multipart capture POST below, which this mock does not read. */
+function drainBody(req) {
+  return new Promise((resolve) => {
+    req.on('data', () => {});
+    req.on('end', resolve);
+    req.on('error', resolve);
+  });
+}
+
 const MIME_TYPES = { '.svg': 'image/svg+xml', '.png': 'image/png' };
 
 function serveAsset(req, res, pathname) {
@@ -272,6 +282,28 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && pathname === '/api/v1/screening') {
+    const contentType = req.headers['content-type'] || '';
+
+    // TEMPORARY STAND-IN: the real capture flow (CaptureScreen) posts a
+    // real multipart body — document image(s), live face frame, optional
+    // video sweep, checkpoint/officer ids — per BACKEND_BRIEF.md §7
+    // ("POST /api/v1/screening multipart -> 201 {session_id,
+    // status:'processing'}"). No backend exists yet to actually run Wave
+    // 1/Wave 2 analysis on that body, so this branch drains it unread and
+    // always replays case-01-genuine's fixture tape regardless of what was
+    // actually captured. Replace this branch with a real streamed analysis
+    // once the backend pipeline exists; nothing else in this file (WS
+    // replay, history, decision) needs to change when that happens.
+    if (contentType.startsWith('multipart/form-data')) {
+      await drainBody(req);
+      const sessionId = crypto.randomUUID();
+      sessions.set(sessionId, 'case-01-genuine');
+      sendJson(res, 200, { sessionId });
+      return;
+    }
+
+    // Dev/demo path: DevFixturePicker posts { caseId } as JSON to jump
+    // straight to a chosen fixture's tape, bypassing capture entirely.
     const body = await readBody(req).catch(() => ({}));
     const caseId = body.caseId;
     if (!CASES.some((c) => c.id === caseId)) {

@@ -29,7 +29,7 @@ export function FindingsList({ signals, onSelectSignal, highlightedSignalId = nu
         ) : (
           <li key={row.groupId} className="border-l-4 border-hold">
             <div className="flex items-center gap-2 px-2 py-1.5">
-              <span className="rounded bg-hold/20 px-1.5 py-0.5 text-scale-2 text-hold">
+              <span className="rounded bg-hold-badge px-1.5 py-0.5 text-scale-2 text-hold">
                 {row.members.length} modules agree on this region
               </span>
             </div>

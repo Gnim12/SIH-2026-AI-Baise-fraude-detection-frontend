@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,8 +13,6 @@ import type { ScreeningEvent } from '../types/screening';
  *  anywhere in the sequence. */
 const submitDecision = vi.fn().mockResolvedValue({});
 vi.mock('../api/client', () => ({
-  fetchCases: vi.fn().mockResolvedValue([]),
-  startScreening: vi.fn().mockResolvedValue({ sessionId: 'sess-kb-walkthrough' }),
   submitDecision: (...args: unknown[]) => submitDecision(...args),
   resolveAssetUrl: (p: string) => p,
 }));
@@ -39,8 +37,10 @@ describe('Keyboard-only completion of a full screening (§8), case-01', () => {
   it('quality -> classified -> ocr -> face -> database -> forensics -> crossdoc -> decision, then 1 + Enter seals CLEAR with no note required', async () => {
     const { LaneScreen } = await import('./LaneScreen');
     render(
-      <MemoryRouter>
-        <LaneScreen />
+      <MemoryRouter initialEntries={['/lane/sess-kb-walkthrough']}>
+        <Routes>
+          <Route path="/lane/:sessionId" element={<LaneScreen />} />
+        </Routes>
       </MemoryRouter>,
     );
     await act(async () => {});

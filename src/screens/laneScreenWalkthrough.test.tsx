@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,8 +16,6 @@ import type { ScreeningEvent } from '../types/screening';
 // server). This is not a substitute for an actual visual walkthrough —
 // it proves the component tree renders correctly, not that it looks right.
 vi.mock('../api/client', () => ({
-  fetchCases: vi.fn().mockResolvedValue([]),
-  startScreening: vi.fn().mockResolvedValue({ sessionId: 'sess-walkthrough' }),
   resolveAssetUrl: (p: string) => p,
 }));
 
@@ -43,8 +41,10 @@ async function mountAndReplay(caseId: string) {
   capturedOnEvent = null;
   const { LaneScreen } = await import('./LaneScreen');
   render(
-    <MemoryRouter>
-      <LaneScreen />
+    <MemoryRouter initialEntries={['/lane/sess-walkthrough']}>
+      <Routes>
+        <Route path="/lane/:sessionId" element={<LaneScreen />} />
+      </Routes>
     </MemoryRouter>,
   );
   await act(async () => {});

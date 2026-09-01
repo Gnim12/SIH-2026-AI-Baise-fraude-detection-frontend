@@ -30,13 +30,13 @@ export function SealedRecord({ session }: SealedRecordProps) {
         <span className="text-eyebrow text-steel-400">Sealed</span>
         <span
           className={`rounded px-2 py-1 text-scale-3 font-semibold text-steel-200 ${
-            decision.override ? 'bg-hold/20' : 'bg-shell-700'
+            decision.override ? 'bg-hold-badge' : 'bg-shell-700'
           }`}
         >
           {DECISION_LABEL[decision.decision] ?? decision.decision}
         </span>
         {decision.override && (
-          <span className="rounded bg-hold/20 px-1.5 py-0.5 text-scale-1 text-hold">override</span>
+          <span className="rounded bg-hold-badge px-1.5 py-0.5 text-scale-1 text-hold">override</span>
         )}
       </div>
 

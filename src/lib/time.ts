@@ -18,6 +18,28 @@ export function formatHoursAgo(hoursElapsed: number): string {
   return `${rounded}h ago`;
 }
 
+/** 'YYYY-MM-DD', local calendar date — what DashboardScreen's date-range
+ *  inputs (native <input type="date">) both read and write, and what
+ *  GET /api/v1/dashboard/summary's from_date/to_date query params expect. */
+export function isoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/** Matches backend/app/api/dashboard.py's own default exactly
+ *  (DEFAULT_RANGE_DAYS = 30, resolved_from = resolved_to - 29 days) — this
+ *  is only the frontend's initial control state, the backend applies the
+ *  same default independently if a request ever omitted the params, but
+ *  DashboardScreen always sends them explicitly so the visible range and
+ *  the queried range never disagree. */
+export function defaultDashboardRange(now: Date = new Date()): { fromDate: string; toDate: string } {
+  const from = new Date(now);
+  from.setDate(from.getDate() - 29);
+  return { fromDate: isoDate(from), toDate: isoDate(now) };
+}
+
 /** Officer-facing timestamp for history rows and the sealed record —
  *  local time, date + minute precision, no seconds (an officer never
  *  needs to disambiguate two decisions a second apart). */

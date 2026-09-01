@@ -1,6 +1,9 @@
 import type { Decision, ScreeningSession } from '../types/screening';
 
-export const API_BASE = 'http://localhost:8787';
+// Defaults to the mock server (npm run mock, port 8787). Point at the real
+// FastAPI backend (BACKEND_BRIEF.md §7) with a .env.local:
+//   VITE_API_BASE=http://localhost:8000
+export const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
 /** Fixture asset URLs (imageUrl, views.*) are server-relative paths served by
  *  the mock server, not by the Vite dev server — resolve them against
@@ -16,7 +19,7 @@ export interface CaseSummary {
 }
 
 export async function fetchCases(): Promise<CaseSummary[]> {
-  const res = await fetch(`${API_BASE}/api/v1/cases`);
+  const res = await fetch(`${API_BASE}/api/v1/cases`, { credentials: 'include' });
   if (!res.ok) throw new Error(`fetchCases failed: ${res.status}`);
   return res.json();
 }
@@ -24,6 +27,7 @@ export async function fetchCases(): Promise<CaseSummary[]> {
 export async function startScreening(caseId: string): Promise<{ sessionId: string }> {
   const res = await fetch(`${API_BASE}/api/v1/screening`, {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ caseId }),
   });
@@ -57,6 +61,7 @@ export async function submitDecision(
 ): Promise<ScreeningSession> {
   const res = await fetch(`${API_BASE}/api/v1/screening/${session.sessionId}/decision`, {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ decision, note, override, session }),
   });
@@ -65,13 +70,15 @@ export async function submitDecision(
 }
 
 export async function fetchHistory(): Promise<ScreeningSession[]> {
-  const res = await fetch(`${API_BASE}/api/v1/history`);
+  const res = await fetch(`${API_BASE}/api/v1/history`, { credentials: 'include' });
   if (!res.ok) throw new Error(`fetchHistory failed: ${res.status}`);
   return res.json();
 }
 
 export async function fetchHistoryEntry(sessionId: string): Promise<ScreeningSession | null> {
-  const res = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(sessionId)}`);
+  const res = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(sessionId)}`, {
+    credentials: 'include',
+  });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`fetchHistoryEntry failed: ${res.status}`);
   return res.json();

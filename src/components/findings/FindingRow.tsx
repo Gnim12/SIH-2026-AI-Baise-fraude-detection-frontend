@@ -30,20 +30,23 @@ export function FindingRow({ signal, onSelect, nested = false, highlighted = fal
         type="button"
         onClick={() => onSelect?.(signal)}
         className={`group flex w-full items-center justify-between gap-2 px-2 py-1.5 text-left text-scale-3 hover:bg-shell-700 ${
-          highlighted ? 'bg-hold/10' : ''
-        } ${nested ? 'pl-8' : ''}`}
+          nested ? 'pl-8' : ''
+        }`}
       >
         {/* group-hover:text-steel-300, not -400: hover turns this row's
             background --shell-700, where --steel-400 fails contrast. */}
-        <span className="flex min-w-0 items-center gap-2">
-          <span aria-hidden="true" className="text-steel-400 group-hover:text-steel-300">
-            ▸
+        <span className="flex min-w-0 flex-col gap-0.5">
+          <span className="flex min-w-0 items-center gap-2">
+            <span aria-hidden="true" className="text-steel-400 group-hover:text-steel-300">
+              ▸
+            </span>
+            <SeverityChip severity={signal.severity} />
+            <span className="truncate text-steel-200">{signal.detail}</span>
+            {!hasRegion && (
+              <span className="shrink-0 text-scale-1 text-steel-400 group-hover:text-steel-300">no location</span>
+            )}
           </span>
-          <SeverityChip severity={signal.severity} />
-          <span className="truncate text-steel-200">{signal.detail}</span>
-          {!hasRegion && (
-            <span className="shrink-0 text-scale-1 text-steel-400 group-hover:text-steel-300">no location</span>
-          )}
+          <span className="pl-6 font-mono text-scale-1 text-steel-400">{signal.code}</span>
         </span>
         <span className="shrink-0 font-mono text-steel-200">
           {signal.weight > 0 ? `+${signal.weight}` : signal.weight}

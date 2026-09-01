@@ -29,6 +29,11 @@ export default {
         hold: 'var(--hold)',
         abstain: 'var(--abstain)',
         recapture: 'var(--recapture)',
+        // solid, pre-mixed badge/chip backgrounds — see index.css's
+        // --hold-badge-bg / --secondary-badge-bg comment for why these
+        // exist instead of bg-hold/20-style alpha blends.
+        'hold-badge': 'var(--hold-badge-bg)',
+        'secondary-badge': 'var(--secondary-badge-bg)',
       },
       fontFamily: {
         sans: ['"Public Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],

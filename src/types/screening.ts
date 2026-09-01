@@ -72,6 +72,10 @@ export interface FaceResult {
   livePortraitUrl?: string;
   padVerdict: 'live' | 'spoof' | 'not_run';
   ghostPortraitConsistent?: boolean;
+  // How the live frame was actually obtained -- see LiveFaceCapture.tsx's
+  // dev/test file-upload fallback. Absent/'live' means a real getUserMedia
+  // capture; 'upload' must never be presented as equivalent to one.
+  captureMethod?: 'live' | 'upload';
 }
 
 // ---------- identity graph ----------

@@ -110,7 +110,7 @@ export function HistoryScreen() {
                     </td>
                     <td className="py-2 pr-4">
                       {decision?.override ? (
-                        <span className="rounded bg-hold/20 px-1.5 py-0.5 text-scale-1 text-hold">override</span>
+                        <span className="rounded bg-hold-badge px-1.5 py-0.5 text-scale-1 text-hold">override</span>
                       ) : (
                         <span className="text-steel-400">—</span>
                       )}

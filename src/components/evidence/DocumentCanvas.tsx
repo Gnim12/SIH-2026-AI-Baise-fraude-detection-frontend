@@ -54,6 +54,12 @@ export function DocumentCanvas({
     setNaturalSize({ width: 0, height: 0 });
   }, [document?.id]);
 
+  // The ref'd container div only exists once `document` is non-null (the
+  // early return below renders a different tree while awaiting the first
+  // document). A `[]`-deps effect fires once at that very first mount, when
+  // the ref is still null, and never gets a chance to retry once the real
+  // container mounts — so this must re-run when the container's presence
+  // changes, not just once ever.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -67,9 +73,10 @@ export function DocumentCanvas({
     }
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, []);
+  }, [Boolean(document)]);
 
   // Wheel-to-zoom needs a non-passive listener to call preventDefault.
+  // Same re-mount-timing issue as the measurement effect above.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -80,7 +87,7 @@ export function DocumentCanvas({
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, []);
+  }, [Boolean(document)]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     dragState.current = { dragging: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };

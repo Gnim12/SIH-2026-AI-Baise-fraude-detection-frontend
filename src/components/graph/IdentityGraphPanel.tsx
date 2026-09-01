@@ -20,7 +20,7 @@ export function IdentityGraphPanel({ graph }: IdentityGraphPanelProps) {
         <span>{graph.priorEncounters.length} prior encounters</span>
         <span className={graph.conflicts > 0 ? 'text-hold' : undefined}>{graph.conflicts} conflicts</span>
         {graph.impossibleTravel && (
-          <span className="rounded bg-hold/20 px-1.5 py-0.5 text-hold">impossible travel</span>
+          <span className="rounded bg-hold-badge px-1.5 py-0.5 text-hold">impossible travel</span>
         )}
       </div>
       {graph.priorEncounters.length === 0 ? (

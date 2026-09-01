@@ -11,14 +11,14 @@ export function EncounterRow({ encounter }: EncounterRowProps) {
   return (
     <div
       className={`flex items-center justify-between gap-2 px-2 py-1.5 text-scale-3 ${
-        encounter.conflict ? 'border-l-4 border-hold bg-hold/5' : ''
+        encounter.conflict ? 'border-l-4 border-hold' : ''
       }`}
     >
       <span className="flex min-w-0 items-center gap-2">
         <span className="truncate text-steel-200">{encounter.nameOnDocument}</span>
         <span className="shrink-0 text-scale-1 text-steel-400">{encounter.checkpoint}</span>
         {encounter.conflict && (
-          <span className="shrink-0 rounded bg-hold/20 px-1 py-0.5 text-scale-1 text-hold">
+          <span className="shrink-0 rounded bg-hold-badge px-1 py-0.5 text-scale-1 text-hold">
             conflict
           </span>
         )}

@@ -68,6 +68,10 @@ export function FacePair({ face }: FacePairProps) {
       )}
 
       <PadBadge padVerdict={face.padVerdict} />
+
+      {face.captureMethod === 'upload' && (
+        <p className="text-scale-1 text-hold">face photo uploaded (dev/test — not a live capture)</p>
+      )}
     </div>
   );
 }

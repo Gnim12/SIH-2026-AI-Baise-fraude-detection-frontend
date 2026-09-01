@@ -21,7 +21,7 @@ export function CoverageBanner({ coverageFlags }: CoverageBannerProps) {
   if (coverageFlags.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-1 border-t border-secondary/40 bg-secondary/10 px-4 py-2">
+    <div className="flex flex-col gap-1 border-t border-secondary/40 bg-secondary-badge px-4 py-2">
       {coverageFlags.map((flag) => (
         <p key={flag} className="flex items-center gap-2 text-scale-3 text-secondary">
           <span aria-hidden="true">⚠</span>

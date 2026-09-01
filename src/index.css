@@ -12,17 +12,57 @@
   --steel-300: #8598a9; /* M6 contrast-audit addition: secondary text specifically for --shell-700 surfaces (hover/raised rows) — 4.80:1 on --shell-700 */
   --steel-200: #c3d0da; /* primary text on dark */
 
-  /* document canvas */
+  /* document canvas — identical in both themes. Paper looks like paper
+   *  regardless of the shell's theme; see theme-audit.test.ts. */
   --canvas: #edeff1; /* the paper the document sits on */
   --canvas-ink: #111820;
   --canvas-rule: #c9d0d7;
 
-  /* verdict — semantic ONLY. Never use these decoratively. */
+  /* verdict — semantic ONLY. Never use these decoratively.
+   *  --hold and --abstain are lightened from the original spec values
+   *  (#d14356 / #6b77c4) — theme-toggle contrast audit found both under
+   *  4.5:1 on --shell-800 (3.66:1 / 3.99:1). See theme-audit.test.ts. */
   --clear: #2e9e6b;
   --secondary: #c98a1e;
-  --hold: #d14356;
-  --abstain: #6b77c4; /* deliberately not grey: abstention is a real state */
+  --hold: #d86070; /* 4.59:1 on --shell-800, 5.11:1 on --shell-900 */
+  --abstain: #7681c8; /* deliberately not grey: abstention is a real state. 4.52:1 on --shell-800 */
   --recapture: #7a8fa0;
+
+  /* Badge/chip backgrounds (override chips, mismatch flags, the coverage
+   *  banner): solid, pre-mixed per theme — NOT a live bg-hold/20-style
+   *  alpha blend. An alpha blend's contrast is capped by the underlying
+   *  panel colour no matter which hue you pick (its computed colour is
+   *  always a weighted average pulled toward that panel), so text-hold
+   *  on bg-hold/20 measured 3.60:1 here — under 4.5:1 regardless of
+   *  --hold's own value. These are the same hue, pushed to the dark end
+   *  of the ramp instead, solved to keep --hold/--secondary text on top
+   *  at >=4.5:1. See theme-audit.test.ts. */
+  --hold-badge-bg: #3a0e14; /* text-hold on top: 4.65:1 */
+  --secondary-badge-bg: #3b2909; /* text-secondary on top: 4.74:1 */
+}
+
+/* Light theme — shell/chrome tokens only. Canvas tokens are deliberately
+ * absent here: the document canvas represents physical paper, not system
+ * chrome, and must render identically regardless of shell theme (see
+ * theme-audit.test.ts). Every pairing below is ≥4.5:1 against both
+ * --shell-900 and --shell-800 (the two backgrounds body text actually
+ * sits on) — see theme-audit.test.ts for the full measured matrix. */
+[data-theme='light'] {
+  --shell-900: #eff2f4;
+  --shell-800: #e4e8eb;
+  --shell-700: #d6dce1;
+  --shell-600: #bdc6cc;
+  --steel-400: #5a6973; /* darkened from starting #5e6e79 — 4.60:1 on --shell-800 (starting value was 4.28:1, fails) */
+  --steel-300: #46545e;
+  --steel-200: #16212b;
+  --clear: #1e764d; /* darkened from starting #1f7a50 — 4.54:1 on --shell-800 (starting value was 4.31:1, fails) */
+  --secondary: #8d5f0d; /* darkened from starting #a06b0f — 4.51:1 on --shell-800 (starting value was 3.70:1, fails) */
+  --hold: #b23347;
+  --abstain: #4d58a8;
+  --recapture: #5a6973; /* matches --steel-400, mirroring dark theme where recapture === steel-400 */
+
+  --hold-badge-bg: #f5dbdf; /* text-hold on top: 4.65:1 */
+  --secondary-badge-bg: #faeacd; /* text-secondary on top: 4.69:1 */
 }
 
 @layer base {
@@ -81,12 +121,16 @@
     animation: region-pulse-outline 200ms ease-out;
   }
 
+  /* color-mix(), not a hardcoded rgba(): --hold itself already has a
+   *  light-theme variant (verdict colours do, unlike --canvas/-ink/-rule
+   *  — see the [data-theme='light'] block above), so the pulse must track
+   *  it the same way region-overlay borders and the MRZ ribbon do. */
   @keyframes region-pulse-outline {
     0% {
-      box-shadow: 0 0 0 0 rgba(209, 67, 86, 0.6);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--hold) 60%, transparent);
     }
     100% {
-      box-shadow: 0 0 0 6px rgba(209, 67, 86, 0);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--hold) 0%, transparent);
     }
   }
 }

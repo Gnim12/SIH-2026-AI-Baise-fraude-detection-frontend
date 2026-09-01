@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ScreeningEvent } from '../types/screening';
 
@@ -10,8 +10,6 @@ import type { ScreeningEvent } from '../types/screening';
 // into CrossDocumentPanel — rather than re-asserting CrossDocumentPanel's
 // own contract in isolation (that's CrossDocumentPanel.test.tsx's job).
 vi.mock('../api/client', () => ({
-  fetchCases: vi.fn().mockResolvedValue([]),
-  startScreening: vi.fn().mockResolvedValue({ sessionId: 'sess-13' }),
   resolveAssetUrl: (path: string) => path,
 }));
 
@@ -39,12 +37,14 @@ describe('LaneScreen composed: case-13 visa transplant shape', () => {
   it('shows both document tabs clean while the cross-document panel carries the finding, in the same rendered LaneScreen', async () => {
     const { LaneScreen } = await import('./LaneScreen');
     render(
-      <MemoryRouter>
-        <LaneScreen />
+      <MemoryRouter initialEntries={['/lane/sess-13']}>
+        <Routes>
+          <Route path="/lane/:sessionId" element={<LaneScreen />} />
+        </Routes>
       </MemoryRouter>,
     );
 
-    // Let the mocked startScreening promise resolve and the socket "connect".
+    // Let the socket "connect".
     await act(async () => {});
     expect(capturedOnEvent).not.toBeNull();
 
