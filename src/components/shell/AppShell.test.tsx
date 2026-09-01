@@ -7,10 +7,12 @@ import { useSessionStore } from '../../store/sessionStore';
 const fetchMeMock = vi.fn();
 const loginMock = vi.fn();
 const logoutMock = vi.fn();
+const requestPasswordResetMock = vi.fn();
 vi.mock('../../api/auth', () => ({
   fetchMe: (...args: unknown[]) => fetchMeMock(...args),
   login: (...args: unknown[]) => loginMock(...args),
   logout: (...args: unknown[]) => logoutMock(...args),
+  requestPasswordReset: (...args: unknown[]) => requestPasswordResetMock(...args),
 }));
 
 // CaptureScreen (the real entry point once authenticated) pulls in
@@ -49,6 +51,7 @@ beforeEach(() => {
   fetchMeMock.mockReset();
   loginMock.mockReset();
   logoutMock.mockReset();
+  requestPasswordResetMock.mockReset();
   connectScreeningSocketMock.mockReset();
   connectScreeningSocketMock.mockImplementation(() => ({ close: vi.fn() }));
   useAuthStore.setState({ officer: null, status: 'checking' });
@@ -64,11 +67,11 @@ describe('AppShell auth guard', () => {
 
     await renderShell('/');
     expect(screen.getByText('Verifying session…')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Officer console' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Lane terminal access' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Start screening/ })).not.toBeInTheDocument();
 
     await act(async () => resolveMe(null));
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Officer console' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Lane terminal access' })).toBeInTheDocument());
     // Explicit timeout (matches src/integration/fixtures.test.ts's own
     // convention): observed timing out under the full suite's parallel
     // CPU load (unrelated to this test's own logic) at vitest's 5000ms
@@ -78,7 +81,7 @@ describe('AppShell auth guard', () => {
   it('an unauthenticated visit to "/" redirects to /login', async () => {
     fetchMeMock.mockResolvedValue(null);
     await renderShell('/');
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Officer console' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Lane terminal access' })).toBeInTheDocument());
     expect(useAuthStore.getState().status).toBe('unauthenticated');
   });
 
@@ -97,7 +100,7 @@ describe('AppShell auth guard', () => {
 
     fireEvent.change(screen.getByLabelText('Officer ID'), { target: { value: 'OFF-2291' } });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'dev-password-2291' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
 
     await waitFor(() => expect(screen.getByRole('button', { name: /Start screening/ })).toBeInTheDocument());
     expect(useAuthStore.getState().officer).toEqual(DEV_OFFICER);
@@ -112,10 +115,10 @@ describe('AppShell auth guard', () => {
 
     fireEvent.change(screen.getByLabelText('Officer ID'), { target: { value: 'OFF-2291' } });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'wrong' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
 
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('AUTHENTICATION FAILED'));
-    expect(screen.getByRole('heading', { name: 'Officer console' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Lane terminal access' })).toBeInTheDocument();
     expect(useAuthStore.getState().status).not.toBe('authenticated');
   });
 
@@ -127,7 +130,7 @@ describe('AppShell auth guard', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Log out' }));
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Officer console' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Lane terminal access' })).toBeInTheDocument());
     expect(logoutMock).toHaveBeenCalledTimes(1);
     expect(useAuthStore.getState().officer).toBeNull();
     expect(useAuthStore.getState().status).toBe('unauthenticated');
@@ -145,11 +148,47 @@ describe('AppShell auth guard', () => {
 
     await renderShell('/lane/sess-1');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Officer console' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Lane terminal access' })).toBeInTheDocument());
     expect(screen.getByText('SESSION EXPIRED — LOG IN AGAIN')).toBeInTheDocument();
     expect(useAuthStore.getState().officer).toBeNull();
     // The WS layer connected exactly once; AppShell's redirect-on-expired
     // effect must not itself trigger another connection attempt.
     expect(connectScreeningSocketMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('AppShell forgot-password flow', () => {
+  it('"Forgot password?" on the login screen navigates to the reset-request form', async () => {
+    fetchMeMock.mockResolvedValue(null);
+    await renderShell('/');
+    await waitFor(() => screen.getByLabelText('Officer ID'));
+
+    fireEvent.click(screen.getByRole('link', { name: 'Forgot password?' }));
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Request assistance' })).toBeInTheDocument());
+  });
+
+  it('/forgot-password is reachable directly without authentication — not gated by RequireAuth', async () => {
+    fetchMeMock.mockResolvedValue(null);
+    await renderShell('/forgot-password');
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Request assistance' })).toBeInTheDocument());
+    // A RequireAuth-gated route would have bounced this unauthenticated
+    // visit to /login instead.
+    expect(screen.queryByRole('heading', { name: 'Lane terminal access' })).not.toBeInTheDocument();
+  });
+
+  it('document title is set from APP_NAME, not a separately hardcoded string', async () => {
+    fetchMeMock.mockResolvedValue(null);
+    const { APP_NAME } = await import('../../lib/constants');
+    await renderShell('/');
+    await waitFor(() => expect(document.title).toBe(APP_NAME));
+  });
+
+  it('the login screen renders the brand mark from APP_NAME, not a hardcoded duplicate', async () => {
+    fetchMeMock.mockResolvedValue(null);
+    const { APP_NAME } = await import('../../lib/constants');
+    await renderShell('/');
+    await waitFor(() => expect(screen.getByText(new RegExp(APP_NAME))).toBeInTheDocument());
   });
 });

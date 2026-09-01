@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { ConnectionState } from '../../api/socket';
+import { APP_NAME } from '../../lib/constants';
 import { useThemeStore, type ThemePreference } from '../../store/themeStore';
 
 const THEME_OPTIONS: ThemePreference[] = ['light', 'dark', 'system'];
@@ -65,6 +66,8 @@ export function LaneHeader({
 }: LaneHeaderProps) {
   return (
     <header className="flex items-center gap-4 border-b border-gray-700 px-4 py-2 text-sm">
+      <span className="text-eyebrow text-steel-300">{APP_NAME}</span>
+      <span className="h-4 w-px bg-shell-600" aria-hidden="true" />
       <span>{laneId}</span>
       <span>{officerId}</span>
       <span role="status" aria-live="polite">

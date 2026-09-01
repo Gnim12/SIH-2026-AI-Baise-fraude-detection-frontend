@@ -13,7 +13,7 @@ export async function login(officerId: string, password: string): Promise<Office
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ officer_id: officerId, password }),
   });
-  if (res.status === 401) throw new Error('AUTHENTICATION FAILED');
+  if (res.status === 401) throw new Error('AUTHENTICATION FAILED — CHECK OFFICER ID AND PASSWORD');
   if (!res.ok) throw new Error(`login failed: ${res.status}`);
   const body = (await res.json()) as { officer: Officer };
   return body.officer;
@@ -24,6 +24,31 @@ export async function login(officerId: string, password: string): Promise<Office
  *  client-side. */
 export async function logout(): Promise<void> {
   await fetch(`${API_BASE}/api/v1/auth/logout`, { method: 'POST', credentials: 'include' });
+}
+
+export interface ResetRequestResult {
+  referenceCode: string;
+  message: string;
+}
+
+/** POST /api/v1/auth/reset-requests {officer_id, reason} -> {referenceCode,
+ *  message}. Public/unauthenticated on purpose — see app/auth/routes.py's
+ *  request_password_reset docstring — so no `credentials: 'include'` here,
+ *  unlike login/logout/fetchMe: there is no session cookie to send or
+ *  receive on this endpoint. Deliberately does not special-case any status
+ *  in a way that would let the UI distinguish "officer_id exists" from
+ *  "officer_id doesn't" — the backend's response is already identical
+ *  either way, and the one thing worth surfacing distinctly is 429 (rate
+ *  limited), which is a caller-visible, non-sensitive outcome. */
+export async function requestPasswordReset(officerId: string, reason: string): Promise<ResetRequestResult> {
+  const res = await fetch(`${API_BASE}/api/v1/auth/reset-requests`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ officer_id: officerId, reason: reason.trim() || null }),
+  });
+  if (res.status === 429) throw new Error('TOO MANY REQUESTS — TRY AGAIN LATER');
+  if (!res.ok) throw new Error(`reset request failed: ${res.status}`);
+  return (await res.json()) as ResetRequestResult;
 }
 
 /** GET /api/v1/auth/me — "am I still logged in". Called once on app load

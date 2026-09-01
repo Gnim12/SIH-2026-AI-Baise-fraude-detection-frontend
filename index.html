@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Officer Console</title>
+    <!-- Static fallback for the pre-JS instant; AppShell overwrites this
+         from src/lib/constants.ts's APP_NAME on mount, since a plain HTML
+         file can't import a TS constant at build time. -->
+    <title>RAKSHAK</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -7,9 +7,11 @@ import { LaneScreen } from '../../screens/LaneScreen';
 import { HistoryScreen } from '../../screens/HistoryScreen';
 import { SessionDetail } from '../../screens/SessionDetail';
 import { LoginScreen } from '../../screens/LoginScreen';
+import { ForgotPasswordScreen } from '../../screens/ForgotPasswordScreen';
 import { DashboardScreen } from '../../screens/DashboardScreen';
 import { fetchMe, logout } from '../../api/auth';
 import type { ConnectionState } from '../../api/socket';
+import { APP_NAME } from '../../lib/constants';
 import { useAuthStore } from '../../store/authStore';
 import { useSettingsStore } from '../../store/settingsStore';
 
@@ -23,7 +25,7 @@ import { useSettingsStore } from '../../store/settingsStore';
  *  Auth: on mount, GET /auth/me decides whether an officer is already
  *  logged in (a page refresh, or returning after closing the tab) --
  *  authStore starts 'checking' and this is the one place that settles it.
- *  Every route except /login is gated behind RequireAuth, which redirects
+ *  Every route except /login and /forgot-password is gated behind RequireAuth, which redirects
  *  to /login once status resolves to 'unauthenticated'. A WS 4401 mid-
  *  session (socket.ts's 'expired' status -- session revoked or simply
  *  expired) and an explicit log-out both go through the SAME path: flip
@@ -44,6 +46,10 @@ export function AppShell() {
   const clearAuth = useAuthStore((s) => s.clear);
   const expireSession = useAuthStore((s) => s.expireSession);
   const [connectionState, setConnectionState] = useState<ConnectionState>('reconnecting');
+
+  useEffect(() => {
+    document.title = APP_NAME;
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,6 +104,7 @@ export function AppShell() {
       <div className="min-h-0 flex-1">
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
+          <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
           <Route element={<RequireAuth />}>
             <Route path="/" element={<CaptureScreen />} />
             <Route path="/lane/:sessionId" element={<LaneScreen onConnectionStateChange={setConnectionState} />} />

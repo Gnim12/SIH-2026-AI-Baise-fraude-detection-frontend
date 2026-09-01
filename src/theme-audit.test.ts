@@ -70,6 +70,7 @@ describe('theme-audit: WCAG contrast, ≥4.5:1 for body text, both themes', () =
     ['steel-200', 'shell-600', 'primary text on selected decision-bar button'],
     ['steel-400', 'shell-900', 'secondary text on outermost chrome'],
     ['steel-400', 'shell-800', 'secondary text on panels'],
+    ['steel-300', 'shell-900', 'RAKSHAK brand mark eyebrow on the login left panel and LaneHeader'],
     ['steel-300', 'shell-700', 'secondary text on raised/hover rows (SeverityChip, FacePair, FindingRow hover)'],
     ['steel-300', 'shell-800', 'secondary text on panels, hover state'],
     ['clear', 'shell-900', 'CLEAR verdict / capture-panel check icon on chrome'],
